@@ -4,8 +4,8 @@ from PIL import Image
 import os, glob
 
 #.  from math import abs
-path = "./PiCam/Images/set2/"
-images_filenames = glob.glob(path + "*.jpg")
+path = "data/Images/*/*"
+images_filenames = glob.glob(path)
 
 print len(images_filenames)
 
