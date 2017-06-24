@@ -10,7 +10,7 @@ import json
 #import pydocumentdb;
 #import pydocumentdb.document_client as document_client
 from bottle import Bottle, get, run, ServerAdapter
-
+import math
 
      
 app_version = "1"
@@ -78,11 +78,6 @@ def studentjs():
      check_cookies()
      return open("html/student.js").read()
 
-@bottle.route('/student')
-def student():
-     check_cookies()
-     return open("html/student.html").read()
-
 
 @bottle.route('/student_images', method='POST')
 def student_images():
@@ -104,7 +99,11 @@ def student_images():
           emotion['userid'] = userid
           emotion['agent'] = bottle.request.environ.get('HTTP_USER_AGENT')
           emotion['version'] = version
-          print(emotion)
+
+          bad = emotion['sadness'] + emotion['contempt'] + emotion['disgust'] + emotion['anger'] + emotion['fear']
+          good = emotion['neutral'] + emotion['surprise'] + emotion['happiness'];
+          emotion['engagement'] = math.tanh((good/0.7) / (bad / 0.7) / 100);
+
           agent = "".join([c for c in emotion['agent'] if c.isalpha() or c.isdigit()]).rstrip()
           last = "".join([c for c in emotion['last-seen'] if c.isalpha() or c.isdigit()]).rstrip()
           debug_fname = '/data/tmp/test_{}_{}.png'.format(agent, last)
@@ -139,7 +138,7 @@ def check_cookies():
 @bottle.route('/')
 def index():
      check_cookies()
-     return open("html/index.html").read()
+     return open("html/student.html").read()
 
 
 #bottle.run(host='0.0.0.0', port=443)
