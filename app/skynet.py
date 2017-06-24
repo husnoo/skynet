@@ -7,6 +7,7 @@ import pprint
 import socket
 import datetime
 import json
+import random
 #import pydocumentdb;
 #import pydocumentdb.document_client as document_client
 from bottle import Bottle, get, run, ServerAdapter
@@ -119,11 +120,31 @@ def student_images():
      return
 
 
+@bottle.route('/teacher-emotions-dummy')
+def teacher_emotions_dummy():
+     return {
+          'some-id': {
+               'engagement': random.randint(0,100) / 100.0
+          },
+          'some-other-id': {
+               'engagement': random.randint(0,100) / 100.0
+          }
+     }
+
+     
 @bottle.route('/teacher-emotions')
 def teacher_emotions():
      check_cookies()
      students_emotions = load_data()
-     return students_emotions
+
+     new_dict = {}
+     for key in students_emotions:
+          new_dict[key] = {
+               key: {
+                    'engagement': students_emotions[key]['engagement']
+               }
+          }
+     return new_dict
 
 def check_cookies():
      bottle.response.set_cookie("skynet-version", app_version)
