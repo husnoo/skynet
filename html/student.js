@@ -1,5 +1,5 @@
 (function() {
-    var width = 320;    // We will scale the photo width to this
+    var width = 240;    // We will scale the photo width to this
     var height = 0;     // This will be computed based on the input stream
     
     var streaming = false;
