@@ -35,9 +35,9 @@
 
 	function timer() {
 	    takepicture();
-	    window.setTimeout(timer, 3000);
+	    window.setTimeout(timer, 1000);
 	};
-	window.setTimeout(timer, 3000);
+	window.setTimeout(timer, 1000);
     }
 
     function takepicture() {

@@ -19,8 +19,8 @@ iptables -A INPUT -i docker0 -j ACCEPT
     # Online
     scp /home/nawal/data/skynet/* core@cloud.husnoo.com:/media/data/code/skynet/
     scp -r /home/nawal/data/skynet/html core@cloud.husnoo.com:/media/data/code/skynet/
-    scp /nix/store/xjwpmm6ds7hxd7aarh9qyfqpwajmdgc1-docker-image-skynet.tar.gz core@cloud.husnoo.com:/media/data/backup/old/images/
-    docker load < /media/data/backup/old/images/xjwpmm6ds7hxd7aarh9qyfqpwajmdgc1-docker-image-skynet.tar.gz
+    scp /nix/store/7466zzp39k7c3l62zrhy133xwk9iyp91-docker-image-skynet.tar.gz core@cloud.husnoo.com:/media/data/backup/old/images/
+    docker load < /media/data/backup/old/images/7466zzp39k7c3l62zrhy133xwk9iyp91-docker-image-skynet.tar.gz
 
 
 # See /home/nawal/data/infrastructure/notes.txt for the nginex proxy and https
@@ -58,6 +58,8 @@ dockerTools.buildImage {
 	    busybox
             pythonPackages.bottle
 	    pythonPackages.pyopenssl
+	    pythonPackages.lockfile
+	    
         ];
         ignoreCollisions = true;
     });

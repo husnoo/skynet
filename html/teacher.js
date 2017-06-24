@@ -21,11 +21,11 @@
 
     function timer() {
         fetch();
-        window.setTimeout(timer, 3000);
+        window.setTimeout(timer, 1000);
     };
     
     function startup() { 
-	window.setTimeout(timer, 3000);
+	window.setTimeout(timer, 1000);
     };
 
     if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading"){
