@@ -8,8 +8,8 @@ input_layer_size  = 1200;  % 30x40 Input Images of Digits
 hidden_layer_size = 600;   % 600 hidden units
 num_labels = 3;          % 3 labels
 %}
-input_layer_size  = 8;  %  25x25 Input Images of Digits
-hidden_layer_size = 5;   % 600 hidden units
+input_layer_size  = 8;  % 8 Input Images of Digits
+hidden_layer_size = 5;   % 5 hidden units
 num_labels = 3;         % 3 labels
 
 %% =========== Part 1: Loading and Visualizing Data =============
@@ -20,17 +20,16 @@ num_labels = 3;         % 3 labels
 % Load Training Data
 fprintf('Loading and Visualizing Data ...\n')
 
-%matrix				% Loading the big matrix
+%matrix                % Loading the big matrix
 m = size(X, 1);
 
 % Randomly select 25 data points to display
 sel = randperm(size(X, 1));
 sel = sel(1:25);
 
-displayData(X(sel, :), 25);
+% displayData(X(sel, :), 25);
 
 fprintf('Program paused. Press enter to continue.\n');
-pause;
 
 %% ================ Part 2: Loading Parameters ================
 %% ================ Part 3: Compute Cost (Feedforward) ================
