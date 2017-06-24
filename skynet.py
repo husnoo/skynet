@@ -63,15 +63,14 @@ def student_images():
      for emotion in emotions:
           emotion['last-seen'] = str(datetime.datetime.now())
           emotion['userid'] = userid
-
-
+          print(emotion)
+          
      try:
           thedata = open("emotions.json",'r').read()
-          print("=="*100 + "\n" +thedata + "\n" + "=="*10)
           students_emotions = json.loads(thedata)
-     except Exception as e:
+          print(len(students_emotions))
+     except IOError as e:
           print(e)
-          raise
           students_emotions = {}
      
      students_emotions[userid] = emotions
