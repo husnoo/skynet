@@ -29,8 +29,8 @@ def load_data():
 
 def save_data(one_face):
      userid = one_face['userid']
-     if userid not in global_storage:
-          global_storage[userid] = one_face
+     #if userid not in global_storage:
+     global_storage[userid] = one_face
 
      remove = []
      for one_id in global_storage:
@@ -98,6 +98,7 @@ def student_images():
      data = bottle.request.body.getvalue()
      byte_array = str(data.split(",")[1].decode('base64'))
      emotions = face.query_face_api(byte_array)
+     print(emotions)
      for emotion in emotions:
           emotion['last-seen'] = str(datetime.datetime.now())
           emotion['userid'] = userid

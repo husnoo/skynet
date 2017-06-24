@@ -9,6 +9,10 @@
 		var str = JSON.stringify(data, null, 2);
 		var out = document.getElementById("out");
 		out.innerHTML = str;
+
+		var update = document.getElementById("update");
+		var timeInMs = Date.now();
+		update.innerHTML = timeInMs;
 	    } else {
 		console.log("error");
 	    }
