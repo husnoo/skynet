@@ -1,4 +1,4 @@
-bottle-e5c3c0/credentials.py
+credentials.py
 *.pyc
 */*.pyc
 */*/*.pyc
