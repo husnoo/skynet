@@ -10,16 +10,7 @@ import json
 #import pydocumentdb;
 #import pydocumentdb.document_client as document_client
 from bottle import Bottle, get, run, ServerAdapter
-import lockfile
-from lockfile import LockFile
 
-
-
-import os
-if os.path.exists('emotions.json'):
-     os.remove('emotions.json')
-if os.path.exists('emotions.lock.lock'):
-     os.remove('emotions.lock.lock')
 
      
 app_version = "1"
@@ -30,36 +21,27 @@ else:
      pem_file = '/data/host.pem'
      
 
+global_storage = {}
 
 def load_data():
-     lock = LockFile("emotions.lock")
-     while not lock.i_am_locking():
-          try:
-               lock.acquire(timeout=60)    # wait up to 60 seconds
-          except LockTimeout:
-               lock.break_lock()
-               lock.acquire()
-     try:
-          with open('emotions.json') as f:
-               data = f.read()                    
-     except IOError as e:
-          data = "{}"
-     return data
+     return global_storage
 
 
-def save_data(data):
-     lock = LockFile("emotions.lock")
-     while not lock.i_am_locking():
-          try:
-               lock.acquire(timeout=60)    # wait up to 60 seconds
-          except LockTimeout:
-               lock.break_lock()
-               lock.acquire()
-     try:
-          with open('emotions.json', 'w') as f:
-               f.write(data)                    
-     except IOError as e:
-          print(e)
+def save_data(one_face):
+     userid = one_face['userid']
+     if userid not in global_storage:
+          global_storage[userid] = one_face
+
+     remove = []
+     for one_id in global_storage:
+          face = global_storage[one_id]
+          seen_str = face['last-seen']
+          seen = datetime.datetime.strptime(seen_str, "%Y-%m-%d %H:%M:%S.%f")
+          delay = (datetime.datetime.now() - seen).total_seconds()
+          if delay > 60:
+               remove.append(one_id)
+     for rem in remove:
+          del global_storage[rem]
      return
 
      
@@ -122,37 +104,16 @@ def student_images():
           emotion['agent'] = bottle.request.environ.get('HTTP_USER_AGENT')
           emotion['version'] = version
           print(emotion)
-          debug_fname = '/data/tmp/test_{}_{}.png'.format(emotion['agent'],emotion['last-seen'])
-          print(debug_fname)
-          with open(debug_fname, 'w') as f:
-               f.write(byte_array)
-          
+          agent = "".join([c for c in emotion['agent'] if c.isalpha() or c.isdigit()]).rstrip()
+          last = "".join([c for c in emotion['last-seen'] if c.isalpha() or c.isdigit()]).rstrip()
+          debug_fname = '/data/tmp/test_{}_{}.png'.format(agent, last)
+          if 'Mac' in debug_fname:
+               print(debug_fname)
+               with open(debug_fname, 'w') as f:
+                    f.write(byte_array)
+     for emotion in emotions:
+          save_data(emotion)
      
-     try:
-          thedata = load_data()
-          students_emotions = json.loads(thedata)
-          print("len(students_emotions)", len(students_emotions))
-     except IOError as e:
-          students_emotions = {}
-     
-     students_emotions[userid] = emotions
-     if len(emotions)==0:
-          del students_emotions[userid]
-
-     remove = []
-     for case in students_emotions:
-          seen_str = students_emotions[case][0]['last-seen']
-          seen = datetime.datetime.strptime(seen_str, "%Y-%m-%d %H:%M:%S.%f")
-          delay = (datetime.datetime.now() - seen).total_seconds()
-          if delay > 60:
-               remove.append(case)
-          if version != app_version:
-               remove.append(case)
-               
-     for rem in remove:
-          del students_emotions[rem]
-
-     save_data(json.dumps(students_emotions))
      print("STOP student_imahes", userid)
 
      return

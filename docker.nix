@@ -1,5 +1,13 @@
 /*
 
+scp /home/nawal/data/skynet/* core@cloud.husnoo.com:/media/data/code/skynet/
+
+docker run         --rm -ti         -p 0.0.0.0:443:443         -v /media/data/projects_data/skynet/:/data       dia/data/code/skynet/:/code         --name skynet skynet 
+
+
+
+
+
 
 
 
