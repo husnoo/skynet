@@ -102,15 +102,15 @@ def student_images():
 
           bad = emotion['sadness'] + emotion['contempt'] + emotion['disgust'] + emotion['anger'] + emotion['fear']
           good = emotion['neutral'] + emotion['surprise'] + emotion['happiness'];
-          emotion['engagement'] = math.tanh((good/0.7) / (bad / 0.7) / 100);
+          emotion['engagement'] = math.tanh((good/0.7) / (0.0001 + bad / 0.7) / 100);
 
           agent = "".join([c for c in emotion['agent'] if c.isalpha() or c.isdigit()]).rstrip()
           last = "".join([c for c in emotion['last-seen'] if c.isalpha() or c.isdigit()]).rstrip()
           debug_fname = '/data/tmp/test_{}_{}.png'.format(agent, last)
-          if 'Mac' in debug_fname:
-               print(debug_fname)
-               with open(debug_fname, 'w') as f:
-                    f.write(byte_array)
+          #if 'Mac' in debug_fname:
+          #     print(debug_fname)
+          #     with open(debug_fname, 'w') as f:
+          #          f.write(byte_array)
      for emotion in emotions:
           save_data(emotion)
      
