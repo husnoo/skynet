@@ -1,0 +1,72 @@
+/*
+
+
+
+
+scp /home/nawal/data/skynet/* core@cloud.husnoo.com:/media/data/code/skynet/
+
+
+
+
+
+
+iptables -A INPUT -i docker0 -j ACCEPT
+
+    # Local
+    nix-build docker.nix
+    docker load < result
+    
+    # Online
+    scp /home/nawal/data/skynet/* core@cloud.husnoo.com:/media/data/code/skynet/
+    scp -r /home/nawal/data/skynet/html core@cloud.husnoo.com:/media/data/code/skynet/
+    scp /nix/store/xjwpmm6ds7hxd7aarh9qyfqpwajmdgc1-docker-image-skynet.tar.gz core@cloud.husnoo.com:/media/data/backup/old/images/
+    docker load < /media/data/backup/old/images/xjwpmm6ds7hxd7aarh9qyfqpwajmdgc1-docker-image-skynet.tar.gz
+
+
+# See /home/nawal/data/infrastructure/notes.txt for the nginex proxy and https
+
+    docker run \
+        --rm -ti \
+        -p 0.0.0.0:443:443 \
+        -v /media/data/projects_data/skynet/:/data \
+        -v /media/data/code/skynet/:/code \
+        --name skynet skynet
+	
+
+
+*/
+
+# http://lethalman.blogspot.co.uk/2016/04/cheap-docker-images-with-nix_15.html
+# http://datakurre.pandala.org/2015/10/nix-for-python-developers.html
+# http://stackoverflow.com/questions/43837691/how-to-package-a-single-python-script-with-nix
+
+
+with import <nixpkgs> {};
+
+dockerTools.buildImage {
+    name = "skynet";
+
+    runAsRoot = ''
+        #!${stdenv.shell}
+        ${dockerTools.shadowSetup}
+        groupadd -r skynet
+        useradd -r -g skynet -d /data -M skynet
+    '';
+
+    contents = (python.buildEnv.override {
+        extraLibs = [
+	    busybox
+            pythonPackages.bottle
+	    pythonPackages.pyopenssl
+        ];
+        ignoreCollisions = true;
+    });
+
+    config = {
+        Cmd = [ "/bin/python" "/code/skynet.py"];
+        ExposedPorts = {
+            "80/tcp" = {};
+        };
+        WorkingDir = "/code";
+    };
+}

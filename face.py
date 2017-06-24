@@ -1,6 +1,10 @@
 import httplib, urllib, base64, json
 from credentials import subscription_key
 import glob
+import ssl
+
+
+
 
 # nix-shell -p python35 -p python35Packages.httplib2
 # python test.py
@@ -30,7 +34,8 @@ face_api_params = urllib.urlencode({
 def query_face_api(body):
     try:
         # Execute the REST API call and get the response.
-        conn = httplib.HTTPSConnection('westeurope.api.cognitive.microsoft.com')
+        conn = httplib.HTTPSConnection('westeurope.api.cognitive.microsoft.com',
+                                       context=ssl._create_unverified_context())
         conn.request("POST", "/face/v1.0/detect?%s" % face_api_params, body, face_api_headers)
         response = conn.getresponse()
         data = response.read()
