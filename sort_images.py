@@ -3,8 +3,8 @@ from PIL import Image, ImageTk
 import os, glob
 
 #.  from math import abs
-path = "./Images/yalefaces/"
-images_filenames = glob.glob(path + "*.jpeg")
+path = "./Images/jaffe/"
+images_filenames = glob.glob(path + "*.tiff")
 
 print (len(images_filenames))
 
