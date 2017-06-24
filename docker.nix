@@ -51,6 +51,12 @@ iptables -A INPUT -i docker0 -j ACCEPT
 
 with import <nixpkgs> {};
 
+(let
+
+code = "";
+
+in
+
 dockerTools.buildImage {
     name = "skynet";
 
@@ -59,6 +65,15 @@ dockerTools.buildImage {
         ${dockerTools.shadowSetup}
         groupadd -r skynet
         useradd -r -g skynet -d /data -M skynet
+	echo "ONE"
+	ls -lh
+	echo "TWO"
+	mkdir /data
+	mkdir /code
+	#cp /home/nawal/data/skynet/*.py /code/
+	#cp -r /home/nawal/data/skynet/html /code/
+	#cp /home/nawal/data/infrastructure/config-proxy/cloud.husnoo.com.pem /data/host.pem
+	
     '';
 
     contents = (python.buildEnv.override {
@@ -68,14 +83,15 @@ dockerTools.buildImage {
 	    pythonPackages.pyopenssl
 	    pythonPackages.lockfile
 	    
+	    
         ];
         ignoreCollisions = true;
-    });
+    }) ++[code];
 
     config = {
         Cmd = [ "/bin/python" "/code/skynet.py"];
         ExposedPorts = {
-            "80/tcp" = {};
+            "443/tcp" = {};
         };
         WorkingDir = "/code";
     };
