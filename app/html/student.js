@@ -1,20 +1,90 @@
 (function() {
+
+
+    function query_emotions(data) {
+	var subscriptionKey = "943a3da539b94315bc353c67557b4b3a";
+	var uriBase = "https://westeurope.api.cognitive.microsoft.com/face/v1.0/detect";
+	var params = {
+            "returnFaceId": "false",
+            "returnFaceLandmarks": "false",
+            "returnFaceAttributes": "emotion",
+	};
+	var the_url = uriBase + "?" + $.param(params);
+	$.ajax({
+            url: the_url,
+            beforeSend: function(xhrObj){
+                xhrObj.setRequestHeader("Content-Type","application/octet-stream");
+                xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
+            },
+            type: "POST",
+	    data: data,
+        }).done(function(data) {
+            console.log(JSON.stringify(data, null, 2));
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            // Display error message.
+            var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
+            errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ? 
+                jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
+            console.log(errorString);
+        });
+
+	
+    }
+    
     var width = 120;    // We will scale the photo width to this
     var height = 0;     // This will be computed based on the input stream
-    
-    var streaming = false;
-    
+    var streaming = false;    
     var video = null;
     var canvas = null;
-    var photo = null;
-    var startbutton = null;
     
+
+
+
+    
+    function takepicture() {
+	var canvas = document.getElementById('canvas');
+
+        var context = canvas.getContext('2d');
+        if (width && height) {
+	    canvas.width = width;
+            canvas.height = height;
+            context.drawImage(video, 0, 0, width, height);
+
+	    //var strURI = canvas.toDataURL('image/png');
+	    //var byteString = atob(decodeURIComponent(strURI.substring(strURI.indexOf(',')+1)));
+
+	    
+	    //var byteArray = new Uint8Array(tar.length);
+	    //for (var b = 0; b < tar.length; b++) {
+	    //byteArray[b] = tar.charCodeAt(b);
+	    //}
+	    //var b = new Blob([byteArray.buffer], {'type': 'application/tar'});
+	    //window.location.href =  window.URL.createObjectURL(b);
+
+	    var img1 = context.getImageData(0, 0, width, height);
+	    var binary = new Uint8Array(img1.data.length);
+	    for (var i = 0; i < img1.data.length; i++) {
+		binary[i] = img1.data[i];
+	    }
+	    query_emotions(binary);
+
+
+
+
+
+	    
+
+
+
+	    
+	} else {
+	    
+        }
+    }
     
     function startup() {
         video = document.getElementById('video');
         canvas = document.getElementById('canvas');
-        photo = document.getElementById('photo');
-        startbutton = document.getElementById('startbutton');
         navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(function(stream) {
 	    console.log(stream);
             video.srcObject = stream;
@@ -35,27 +105,19 @@
 
 	function timer() {
 	    takepicture();
-	    window.setTimeout(timer, 1000);
+	    //window.setTimeout(timer, 4000);
 	};
-	window.setTimeout(timer, 1000);
+	window.setTimeout(timer, 4000);
     }
 
-    function takepicture() {
-        var context = canvas.getContext('2d');
-        if (width && height) {
-	    canvas.width = width;
-            canvas.height = height;
-            context.drawImage(video, 0, 0, width, height);
-            var data = canvas.toDataURL('image/png');
-	    
-	    var request = new XMLHttpRequest();
-	    request.open('POST', '/student_images', true);
-	    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-	    request.send(data);
-        } else {
-	    
-        }
-    }
+
+
+
+
+
+
+
+    
     if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading"){
 	startup();
     } else {
