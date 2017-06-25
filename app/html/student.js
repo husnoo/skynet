@@ -20,10 +20,15 @@
 	    data: data,
 	    processData: false
         }).done(function(data) {
-            console.log(JSON.stringify(data, null, 2));
-
-	    // Pass it to our server here
-	    
+	    var face = data[0];
+	    if (face != undefined) {
+		var emotion = face['faceAttributes']['emotion'];
+		console.log(JSON.stringify(emotion));
+		var request = new XMLHttpRequest();
+		request.open('POST', '/send_emotions', true);
+		request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+		request.send(JSON.stringify(emotion));
+	    }
         }).fail(function(jqXHR, textStatus, errorThrown) {
             // Display error message.
             var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
@@ -38,7 +43,7 @@
     var streaming = false;    
     var video = null;
     var canvas = null;
-    var timeout;
+    //var timeout;
 
     function takepicture() {
 	var canvas = document.getElementById('canvas');
@@ -56,10 +61,10 @@
 	    function charCodeFromCharacter(c) {
 		return c.charCodeAt(0);
 	    }
-            clearTimeout(timeout);
-	    timeout = setTimeout(function() {
-		query_emotions(uint8Data);
-	    }, 1000);
+            //clearTimeout(timeout);
+	    //timeout = setTimeout(function() {
+	    query_emotions(uint8Data);
+	    //}, 5000);
 	} else {
 	    
         }
@@ -90,16 +95,8 @@
 	    takepicture();
 	    window.setTimeout(timer, 1000);
 	};
-	window.setTimeout(timer, 1000);
+	window.setTimeout(timer, 100);
     }
-
-
-
-
-
-
-
-
     
     if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading"){
 	startup();

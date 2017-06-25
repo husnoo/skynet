@@ -1,7 +1,6 @@
 import bottle
 bottle.BaseRequest.MEMFILE_MAX = 1024 * 1024 * 3 
 import base64
-import face
 import uuid
 import pprint
 import socket
@@ -13,40 +12,6 @@ import random
 from bottle import Bottle, get, run, ServerAdapter
 import math
 
-     
-app_version = "1"
-
-if socket.gethostname()=='heisenbug':
-     pem_file = '/home/nawal/data/infrastructure/config-proxy/cloud.husnoo.com.pem'
-else:
-     pem_file = '/data/host.pem'
-     
-
-global_storage = {}
-
-def load_data():
-     return global_storage
-
-
-def save_data(one_face):
-     userid = one_face['userid']
-     #if userid not in global_storage:
-     global_storage[userid] = one_face
-
-     remove = []
-     for one_id in global_storage:
-          face = global_storage[one_id]
-          seen_str = face['last-seen']
-          seen = datetime.datetime.strptime(seen_str, "%Y-%m-%d %H:%M:%S.%f")
-          delay = (datetime.datetime.now() - seen).total_seconds()
-          if delay > 60:
-               remove.append(one_id)
-     for rem in remove:
-          del global_storage[rem]
-     return
-
-     
-# copied from bottle. Only changes are to import ssl and wrap the socket
 class SSLWSGIRefServer(ServerAdapter):
     def run(self, handler):
         from wsgiref.simple_server import make_server, WSGIRequestHandler
@@ -58,85 +23,73 @@ class SSLWSGIRefServer(ServerAdapter):
         srv = make_server(self.host, self.port, handler, **self.options)
         srv.socket = ssl.wrap_socket (
         	srv.socket,
-        	certfile=pem_file,  # path to certificate
+        	certfile=pem_file,
         	server_side=True)
         srv.serve_forever()
 
+app_version = "1"
+pem_file = '/data/host.pem'
+global_storage = {}
 
-@bottle.route('/teacher.js')
-def teacherjs():
-     check_cookies()
-     return open("html/teacher.js").read()
+def get_data():
+     return global_storage
+
+
+def set_data(emotion):
+    print(emotion)
+    userid = emotion['userid']
+    global_storage[userid] = emotion
+    remove = []
+    for one_id in global_storage:
+        face = global_storage[one_id]
+        seen_str = face['last-seen']
+        seen = datetime.datetime.strptime(seen_str, "%Y-%m-%d %H:%M:%S.%f")
+        delay = (datetime.datetime.now() - seen).total_seconds()
+        if delay > 60:
+            remove.append(one_id)
+    for rem in remove:
+        del global_storage[rem]
+    print(global_storage)
+    return
+
+@bottle.route('/static/<filename>')
+def static_file(filename):
+     return bottle.static_file(filename, root="/code/html")
+
 
 @bottle.route('/teacher')
 def teacher():
      check_cookies()
      return open("html/teacher.html").read()
 
-
-@bottle.route('/student.js')
-def studentjs():
-     check_cookies()
-     return open("html/student.js").read()
-
-
-@bottle.route('/student_images', method='POST')
-def student_images():
+@bottle.route('/send_emotions', method='POST')
+def send_emotions():
      check_cookies()
      userid = bottle.request.get_cookie("userid")
      version = bottle.request.get_cookie("skynet-version")
-     print("START student_imahes", userid)
-
+     print("START send_emotions", userid)
      print("version", version)
      if version != app_version:
-          bottle.redirect('/')
-     
+          bottle.redirect('/')     
      data = bottle.request.body.getvalue()
-     byte_array = str(data.split(",")[1].decode('base64'))
-     emotions = face.query_face_api(byte_array)
-     print(emotions)
-     for emotion in emotions:
-          emotion['last-seen'] = str(datetime.datetime.now())
-          emotion['userid'] = userid
-          emotion['agent'] = bottle.request.environ.get('HTTP_USER_AGENT')
-          emotion['version'] = version
+     emotion = json.loads(data)
+     emotion['last-seen'] = str(datetime.datetime.now())
+     emotion['userid'] = userid
+     emotion['agent'] = bottle.request.environ.get('HTTP_USER_AGENT')
+     emotion['version'] = version
 
-          bad = emotion['sadness'] + emotion['contempt'] + emotion['disgust'] + emotion['anger'] + emotion['fear']
-          good = emotion['neutral'] + emotion['surprise'] + emotion['happiness'];
-          emotion['engagement'] = math.tanh((good/0.7) / (0.0001 + bad / 0.7) / 100);
-
-          agent = "".join([c for c in emotion['agent'] if c.isalpha() or c.isdigit()]).rstrip()
-          last = "".join([c for c in emotion['last-seen'] if c.isalpha() or c.isdigit()]).rstrip()
-          debug_fname = '/data/tmp/test_{}_{}.png'.format(agent, last)
-          #if 'Mac' in debug_fname:
-          #     print(debug_fname)
-          #     with open(debug_fname, 'w') as f:
-          #          f.write(byte_array)
-     for emotion in emotions:
-          save_data(emotion)
-     
-     print("STOP student_imahes", userid)
-
+     bad = emotion['sadness'] + emotion['contempt'] + emotion['disgust'] + emotion['anger'] + emotion['fear']
+     good = emotion['neutral'] + emotion['surprise'] + emotion['happiness'];
+     emotion['engagement'] = math.tanh((good/0.7) / (0.0001 + bad / 0.7) / 100);
+     set_data(emotion)
+     print("STOP send_emotions", userid)
      return
-
-
-@bottle.route('/teacher-emotions-dummy')
-def teacher_emotions_dummy():
-     return {
-          'some-id': {
-               'engagement': random.randint(0,100) / 100.0
-          },
-          'some-other-id': {
-               'engagement': random.randint(0,100) / 100.0
-          }
-     }
 
      
 @bottle.route('/teacher-emotions')
 def teacher_emotions():
      check_cookies()
-     students_emotions = load_data()
-
+     students_emotions = get_data()
      new_dict = {}
      for key in students_emotions:
           new_dict[key] = {
@@ -155,7 +108,7 @@ def check_cookies():
      if not userid:
           bottle.response.set_cookie("userid", str(uuid.uuid1())[0:6])
           
-     
+
 @bottle.route('/')
 def index():
      check_cookies()
