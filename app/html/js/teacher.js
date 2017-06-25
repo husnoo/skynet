@@ -43,6 +43,18 @@
             console.log(myChart);
           myChart.update();
         }
+
+        var sumData = 0;
+        for (var myKey in model) {
+                if (model.hasOwnProperty(myKey)) {
+                    if(myKey in userCells) {
+                        sumData += (model[myKey] - 3);
+                    }
+                }
+        }
+
+        dataSumHistory[5] = sumData;
+
     }
 
 
@@ -141,11 +153,11 @@
             for (var myKey in model) {
                 if (model.hasOwnProperty(myKey)) {
                     if(myKey in userCells) {
-                        switchColour(model[myKey], document.getElementById(userCells[myKey]));
+                        switchColour(model[myKey]-3, document.getElementById(userCells[myKey]));
                     } else {
 			userCells[myKey] = cells[userCounter];
                         userCounter++;
-                        switchColour(model[myKey], document.getElementById(userCells[myKey]));
+                        switchColour(model[myKey]-3, document.getElementById(userCells[myKey]));
                     }
                 }
             }
