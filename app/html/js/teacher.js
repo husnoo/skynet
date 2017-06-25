@@ -200,9 +200,9 @@
 	    if (request.status >= 200 && request.status < 400) {
 		model = JSON.parse(request.responseText);
 		control.createEngagements();
-		var str = JSON.stringify(model, null, 2);
-		var out = document.getElementById("out");
-		out.innerHTML = str;
+		//var str = JSON.stringify(model, null, 2);
+		//var out = document.getElementById("out");
+		//out.innerHTML = str;
 		
 		var update = document.getElementById("update");
 		var timeInMs = Date.now();
