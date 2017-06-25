@@ -12,6 +12,7 @@ def get_score(d):
 	h2 = np.ones(len(np.array(h1)[0]) + 1)
 	h2[1:] = h1 
 	h3 = sigmoid_array(np.matrix(h2) * np.matrix(theta2.transpose()))
+        print(h3)
 	return np.argmax(h3) + 1
 
 if __name__=="__main__":
@@ -26,4 +27,4 @@ if __name__=="__main__":
         "sadness": 0.096,
         "surprise": 0.325
         }""")
-        get_score(d)
+        print(get_score(d))

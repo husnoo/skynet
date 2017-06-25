@@ -152,15 +152,15 @@
                 if (model.hasOwnProperty(myKey)) {
                     if(myKey in userCells) {
 			
-			console.log("switch: ", model[myKey]['engagement']-3, document.getElementById(userCells[myKey]));
-                        switchColour(model[myKey]['engagement']-3, document.getElementById(userCells[myKey]));
+			console.log("switch: ", model[myKey]['engagement'], document.getElementById(userCells[myKey]));
+                        switchColour(model[myKey]['engagement'], document.getElementById(userCells[myKey]));
                     } else {
 			
-			console.log("switch: ", model[myKey]['engagement']-3, document.getElementById(userCells[myKey]));
+			console.log("switch: ", model[myKey]['engagement'], document.getElementById(userCells[myKey]));
 
 			userCells[myKey] = cells[userCounter];
                         userCounter++;
-                        switchColour(model[myKey]['engagement']-3, document.getElementById(userCells[myKey]));
+                        switchColour(model[myKey]['engagement'], document.getElementById(userCells[myKey]));
 
 			
                     }
