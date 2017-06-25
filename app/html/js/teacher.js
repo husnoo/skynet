@@ -29,7 +29,7 @@
 
         dataSumHistory.shift();
         
-        data = Math.floor((Math.random() * 30) + 10);
+        data = Math.floor((Math.random() * 6) + 2);
         dataSumHistory[5] = data;
 
         //dataSumHistory[5] = sumOfData;
