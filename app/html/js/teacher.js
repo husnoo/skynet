@@ -16,6 +16,7 @@
     var photo = null;
     var startbutton = null;
 
+    var myChart;
     
     function main() {
 	dataTimer();
@@ -28,16 +29,23 @@
     function updateDataSumHistory() {
 
         dataSumHistory.shift();
-        
+
+
+
+	
         data = Math.floor((Math.random() * 30) + 10);
-        dataSumHistory[5] = data;
+
+
+
+
+	dataSumHistory[5] = data;
 
         //dataSumHistory[5] = sumOfData;
 
-        for (var i = 0; i < dataSumHistory.length; i++) {
-            console.log("Item " + i + ": " + dataSumHistory[i]);
-            // randomDataArray.push(Math.floor((Math.random() * 5) + 2));
-        }
+        //for (var i = 0; i < dataSumHistory.length; i++) {
+        //    console.log("Item " + i + ": " + dataSumHistory[i]);
+        //    // randomDataArray.push(Math.floor((Math.random() * 5) + 2));
+        //}
         
         if(myChart !== undefined) {
             console.log(myChart);
@@ -54,7 +62,7 @@
     function runGraph() {
 	console.log(document.getElementById("graph"))
 	var ctx = document.getElementById("graph").getContext('2d');
-	var myChart = new Chart(ctx, {
+	myChart = new Chart(ctx, {
             type: 'line',
             data: {
 		labels: ["00:05", "00:04", "00:03", "00:02", "00:01", "Now"],
