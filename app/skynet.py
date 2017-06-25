@@ -34,9 +34,10 @@ def get_data():
 
 
 def set_data(emotion):
-    logging.debug(emotion)
+    #logging.debug(emotion)
     userid = emotion['userid']
-    global_storage = cache.get('global_storage')
+    global_storage = get_data()
+    
     global_storage[userid] = emotion
     remove = []
     for one_id in global_storage:
@@ -49,12 +50,12 @@ def set_data(emotion):
     for rem in remove:
         del global_storage[rem]
     cache.set('global_storage', global_storage)
-    logging.debug(global_storage)
+    #logging.debug(global_storage)
     return
 
 @app.route('/static/<path:path>')
 def static_file(path):
-     logging.debug(path)
+     #logging.debug(path)
      return send_from_directory('html', path)
 
 def wrap_cookie(txt):
@@ -66,21 +67,21 @@ def wrap_cookie(txt):
 
 @app.route('/teacher')
 def teacher():
-    logging.debug('piss off debug')
+    #logging.debug('piss off debug')
     return wrap_cookie(open("html/teacher.html").read())
 
 @app.route('/send_emotions', methods=['POST'])
 def send_emotions():
      userid = request.cookies.get("userid")
      version = request.cookies.get("skynet-version")
-     logging.debug("START send_emotions" + userid)
-     logging.debug("version" + version)
+     #logging.debug("START send_emotions" + userid)
+     #logging.debug("version" + version)
      if version != app_version:
           return {}
      emotion = request.get_json()
-     logging.debug('='*100 + '\n')
-     pprint.pprint(emotion)
-     logging.debug('\n' + '='*100)
+     #logging.debug('='*100 + '\n')
+     #pprint.pprint(emotion)
+     #logging.debug('\n' + '='*100)
      if emotion is None:
           emotion = {}
           emotion['engagement'] = 0
@@ -94,7 +95,7 @@ def send_emotions():
      emotion['agent'] = request.environ.get('HTTP_USER_AGENT')
      emotion['version'] = version
      set_data(emotion)
-     logging.debug("STOP send_emotions"+ userid)
+     #logging.debug("STOP send_emotions"+ userid)
      return wrap_cookie("ok")
 
 @app.route('/teacher-emotions')
@@ -102,11 +103,12 @@ def teacher_emotions():
      students_emotions = get_data()
      logging.debug(students_emotions)
      new_dict = {}
+     #logging.debug("students_emotions: " + str(students_emotions))
+     #logging.debug("students_emotions keys: " + str(students_emotions.keys()))
+     
      for key in students_emotions:
           new_dict[key] = {
-               key: {
-                    'engagement': students_emotions[key]['engagement']
-               }
+               'engagement': students_emotions[key]['engagement']
           }
      return wrap_cookie(json.dumps(new_dict))
 
