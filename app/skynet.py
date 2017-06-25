@@ -6,7 +6,7 @@ import datetime
 import json
 import random
 import math
-
+from get_score import get_score
 
 from flask import Flask
 from flask import request
@@ -58,26 +58,31 @@ def teacher():
 
 @app.route('/send_emotions', methods=['POST'])
 def send_emotions():
-    userid = request.cookies.get("userid")
-    version = request.cookies.get("skynet-version")
-    print("START send_emotions", userid)
-    print("version", version)
-    if version != app_version:
-        return {}
-    emotion = request.get_json()
-    if emotion is None:
-        return wrap_cookie("no")
-    #print('='*100 + '\n' + str(emotion) + '\n' + '='*100)
-    emotion['last-seen'] = str(datetime.datetime.now())
-    emotion['userid'] = userid
-    emotion['agent'] = request.environ.get('HTTP_USER_AGENT')
-    emotion['version'] = version
-    bad = emotion['sadness'] + emotion['contempt'] + emotion['disgust'] + emotion['anger'] + emotion['fear']
-    good = emotion['neutral'] + emotion['surprise'] + emotion['happiness'];
-    emotion['engagement'] = math.tanh((good/0.7) / (0.0001 + bad / 0.7) / 100);
-    set_data(emotion)
-    print("STOP send_emotions", userid)
-    return wrap_cookie("ok")
+     userid = request.cookies.get("userid")
+     version = request.cookies.get("skynet-version")
+     print("START send_emotions", userid)
+     print("version", version)
+     if version != app_version:
+          return {}
+     emotion = request.get_json()
+     print('='*100 + '\n')
+     pprint.pprint(emotion)
+     print('\n' + '='*100)
+     if emotion is None:
+          emotion = {}
+          emotion['engagement'] = 0
+     elif emotion["face"]==0:
+          emotion = {}
+          emotion['engagement'] = 0
+     else:
+          emotion['engagement'] = get_score(emotion)
+     emotion['last-seen'] = str(datetime.datetime.now())
+     emotion['userid'] = userid
+     emotion['agent'] = request.environ.get('HTTP_USER_AGENT')
+     emotion['version'] = version
+     set_data(emotion)
+     print("STOP send_emotions", userid)
+     return wrap_cookie("ok")
 
 @app.route('/teacher-emotions')
 def teacher_emotions():

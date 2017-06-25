@@ -7,7 +7,7 @@
 
 FROM debian
 RUN apt-get update
-RUN apt-get install -y python python-openssl python-flask
+RUN apt-get install -y python python-openssl python-flask python-numpy
 
 WORKDIR /code
 ADD . /code

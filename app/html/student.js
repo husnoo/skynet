@@ -21,23 +21,23 @@
 	    processData: false
         }).done(function(data) {
 	    var face = data[0];
+	    var emotion = {}
 	    if (face != undefined) {
-		var emotion = face['faceAttributes']['emotion'];
-		console.log(JSON.stringify(emotion));
-		//var request = new XMLHttpRequest();
-		//request.open('POST', '/send_emotions', true);
-		//request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-		//request.send(JSON.stringify(emotion));
-		$.ajax({
-		    type: 'POST',
-		    contentType: 'application/json',
-		    url: '/send_emotions',
-		    dataType : 'json',
-		    data : JSON.stringify(emotion)
-		});
+		emotion = face['faceAttributes']['emotion'];
+		emotion["face"] = 1
+	    } else {
+		emotion = {'face': 0}
+	    } 
+	    console.log(JSON.stringify(emotion));
+	    $.ajax({
+		type: 'POST',
+		contentType: 'application/json',
+		url: '/send_emotions',
+		dataType : 'json',
+		data : JSON.stringify(emotion)
+	    });
 
-		
-	    }
+	
         }).fail(function(jqXHR, textStatus, errorThrown) {
             // Display error message.
             var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
