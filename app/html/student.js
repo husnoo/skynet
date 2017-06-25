@@ -10,7 +10,6 @@
             "returnFaceAttributes": "emotion",
 	};
 	var the_url = uriBase + "?" + $.param(params);
-
 	$.ajax({
             url: the_url,
             beforeSend: function(xhrObj){
@@ -22,6 +21,9 @@
 	    processData: false
         }).done(function(data) {
             console.log(JSON.stringify(data, null, 2));
+
+	    // Pass it to our server here
+	    
         }).fail(function(jqXHR, textStatus, errorThrown) {
             // Display error message.
             var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
@@ -29,8 +31,6 @@
                 jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
             console.log(errorString);
         });
-
-	
     }
     
     var width = 120;    // We will scale the photo width to this
@@ -38,27 +38,16 @@
     var streaming = false;    
     var video = null;
     var canvas = null;
-    
+    var timeout;
 
-
-
-    
     function takepicture() {
 	var canvas = document.getElementById('canvas');
-
         var context = canvas.getContext('2d');
         if (width && height) {
 	    canvas.width = width;
             canvas.height = height;
             context.drawImage(video, 0, 0, width, height);
-
 	    var strURI = canvas.toDataURL('image/png');
-	    //var byteString = atob(decodeURIComponent(strURI.substring(strURI.indexOf(',')+1)));
-	    //var byteArray = new Uint8Array(tar.length);
-	    //for (var b = 0; b < tar.length; b++) {
-	    //byteArray[b] = tar.charCodeAt(b);
-	    //}
-	    //window.location.href =  window.URL.createObjectURL(b);
 	    var b64Data = strURI.split(',');
             var byteCharacters = atob(unescape(b64Data[1]));
             var byteNumbers = Array.prototype.map.call(byteCharacters,
@@ -67,18 +56,10 @@
 	    function charCodeFromCharacter(c) {
 		return c.charCodeAt(0);
 	    }
-
-	    query_emotions(uint8Data);
-	    //console.log()
-
-
-
-
-	    
-
-
-
-	    
+            clearTimeout(timeout);
+	    timeout = setTimeout(function() {
+		query_emotions(uint8Data);
+	    }, 1000);
 	} else {
 	    
         }
@@ -107,9 +88,9 @@
 
 	function timer() {
 	    takepicture();
-	    //window.setTimeout(timer, 4000);
+	    window.setTimeout(timer, 1000);
 	};
-	window.setTimeout(timer, 4000);
+	window.setTimeout(timer, 1000);
     }
 
 
