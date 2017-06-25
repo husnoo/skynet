@@ -10,6 +10,7 @@
             "returnFaceAttributes": "emotion",
 	};
 	var the_url = uriBase + "?" + $.param(params);
+
 	$.ajax({
             url: the_url,
             beforeSend: function(xhrObj){
@@ -18,6 +19,7 @@
             },
             type: "POST",
 	    data: data,
+	    processData: false
         }).done(function(data) {
             console.log(JSON.stringify(data, null, 2));
         }).fail(function(jqXHR, textStatus, errorThrown) {
@@ -50,24 +52,24 @@
             canvas.height = height;
             context.drawImage(video, 0, 0, width, height);
 
-	    //var strURI = canvas.toDataURL('image/png');
+	    var strURI = canvas.toDataURL('image/png');
 	    //var byteString = atob(decodeURIComponent(strURI.substring(strURI.indexOf(',')+1)));
-
-	    
 	    //var byteArray = new Uint8Array(tar.length);
 	    //for (var b = 0; b < tar.length; b++) {
 	    //byteArray[b] = tar.charCodeAt(b);
 	    //}
-	    //var b = new Blob([byteArray.buffer], {'type': 'application/tar'});
 	    //window.location.href =  window.URL.createObjectURL(b);
-
-	    var img1 = context.getImageData(0, 0, width, height);
-	    var binary = new Uint8Array(img1.data.length);
-	    for (var i = 0; i < img1.data.length; i++) {
-		binary[i] = img1.data[i];
+	    var b64Data = strURI.split(',');
+            var byteCharacters = atob(unescape(b64Data[1]));
+            var byteNumbers = Array.prototype.map.call(byteCharacters,
+						       charCodeFromCharacter);
+            var uint8Data = new Uint8Array(byteNumbers);
+	    function charCodeFromCharacter(c) {
+		return c.charCodeAt(0);
 	    }
-	    query_emotions(binary);
 
+	    query_emotions(uint8Data);
+	    //console.log()
 
 
 
