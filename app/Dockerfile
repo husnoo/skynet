@@ -5,14 +5,12 @@
 # docker run -d -p 0.0.0.0:443:443 --name skynet skynet &
 # docker run --rm -ti -p 0.0.0.0:443:443 --name skynet skynet
 
-FROM alpine
-RUN apk update && apk upgrade
-RUN apk add --update python py-pip py2-openssl py2-bottle
-
+FROM debian
+RUN apt-get update
+RUN apt-get install -y python python-openssl python-flask
 
 WORKDIR /code
 ADD . /code
-ADD host.pem /data/host.pem
 ENTRYPOINT [ "python", "/code/skynet.py" ]
 
 

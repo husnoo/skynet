@@ -1,5 +1,3 @@
-import bottle
-bottle.BaseRequest.MEMFILE_MAX = 1024 * 1024 * 3 
 import base64
 import uuid
 import pprint
@@ -7,28 +5,17 @@ import socket
 import datetime
 import json
 import random
-#import pydocumentdb;
-#import pydocumentdb.document_client as document_client
-from bottle import Bottle, get, run, ServerAdapter
 import math
 
-class SSLWSGIRefServer(ServerAdapter):
-    def run(self, handler):
-        from wsgiref.simple_server import make_server, WSGIRequestHandler
-        import ssl
-        if self.quiet:
-            class QuietHandler(WSGIRequestHandler):
-                def log_request(*args, **kw): pass
-            self.options['handler_class'] = QuietHandler
-        srv = make_server(self.host, self.port, handler, **self.options)
-        srv.socket = ssl.wrap_socket (
-        	srv.socket,
-        	certfile=pem_file,
-        	server_side=True)
-        srv.serve_forever()
+
+from flask import Flask
+from flask import request
+from flask import make_response
+
+app = Flask(__name__)
+
 
 app_version = "1"
-pem_file = '/data/host.pem'
 global_storage = {}
 
 def get_data():
@@ -52,44 +39,50 @@ def set_data(emotion):
     print(global_storage)
     return
 
-@bottle.route('/static/<filename>')
+@app.route('/static/<filename>')
 def static_file(filename):
-     return bottle.static_file(filename, root="/code/html")
+     return open("/code/html/" + filename).read()
 
 
-@bottle.route('/teacher')
+
+def wrap_cookie(txt):
+    resp = make_response(txt)
+    if not has_cookie():
+        resp.set_cookie("skynet-version", app_version)
+        resp.set_cookie("userid", str(uuid.uuid1())[0:6])
+    return resp
+
+@app.route('/teacher')
 def teacher():
-     check_cookies()
-     return open("html/teacher.html").read()
+    return wrap_cookie(open("html/teacher.html").read())
 
-@bottle.route('/send_emotions', method='POST')
+@app.route('/send_emotions', methods=['POST'])
 def send_emotions():
-     check_cookies()
-     userid = bottle.request.get_cookie("userid")
-     version = bottle.request.get_cookie("skynet-version")
-     print("START send_emotions", userid)
-     print("version", version)
-     if version != app_version:
-          bottle.redirect('/')     
-     data = bottle.request.body.getvalue()
-     emotion = json.loads(data)
-     emotion['last-seen'] = str(datetime.datetime.now())
-     emotion['userid'] = userid
-     emotion['agent'] = bottle.request.environ.get('HTTP_USER_AGENT')
-     emotion['version'] = version
+    userid = request.cookies.get("userid")
+    version = request.cookies.get("skynet-version")
+    print("START send_emotions", userid)
+    print("version", version)
+    if version != app_version:
+        return {}
+    emotion = request.get_json()
+    if emotion is None:
+        return wrap_cookie("no")
+    #print('='*100 + '\n' + str(emotion) + '\n' + '='*100)
+    emotion['last-seen'] = str(datetime.datetime.now())
+    emotion['userid'] = userid
+    emotion['agent'] = request.environ.get('HTTP_USER_AGENT')
+    emotion['version'] = version
+    bad = emotion['sadness'] + emotion['contempt'] + emotion['disgust'] + emotion['anger'] + emotion['fear']
+    good = emotion['neutral'] + emotion['surprise'] + emotion['happiness'];
+    emotion['engagement'] = math.tanh((good/0.7) / (0.0001 + bad / 0.7) / 100);
+    set_data(emotion)
+    print("STOP send_emotions", userid)
+    return wrap_cookie("ok")
 
-     bad = emotion['sadness'] + emotion['contempt'] + emotion['disgust'] + emotion['anger'] + emotion['fear']
-     good = emotion['neutral'] + emotion['surprise'] + emotion['happiness'];
-     emotion['engagement'] = math.tanh((good/0.7) / (0.0001 + bad / 0.7) / 100);
-     set_data(emotion)
-     print("STOP send_emotions", userid)
-     return
-
-     
-@bottle.route('/teacher-emotions')
+@app.route('/teacher-emotions')
 def teacher_emotions():
-     check_cookies()
      students_emotions = get_data()
+     print(students_emotions)
      new_dict = {}
      for key in students_emotions:
           new_dict[key] = {
@@ -97,24 +90,27 @@ def teacher_emotions():
                     'engagement': students_emotions[key]['engagement']
                }
           }
-     return new_dict
+     return wrap_cookie(json.dumps(new_dict))
 
-def check_cookies():
-     bottle.response.set_cookie("skynet-version", app_version)
-     try:
-          userid = bottle.request.get_cookie("userid")
-     except:
-          pass
-     if not userid:
-          bottle.response.set_cookie("userid", str(uuid.uuid1())[0:6])
-          
-
-@bottle.route('/')
+def has_cookie():
+    userid = None
+    try:
+        userid = request.cookies.get("userid")
+    except:
+        pass
+    return userid is not None
+ 
+@app.route('/')
 def index():
-     check_cookies()
-     return open("html/student.html").read()
+     return wrap_cookie(open("html/student.html").read())
 
 
-#bottle.run(host='0.0.0.0', port=443)
-srv = SSLWSGIRefServer(host="0.0.0.0", port=443)
-run(server=srv)
+
+
+
+
+context = ('/code/host.crt', '/code/host.key')
+
+app.run(host='0.0.0.0',port=443, 
+        debug=True,
+        ssl_context=context)

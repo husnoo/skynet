@@ -24,10 +24,19 @@
 	    if (face != undefined) {
 		var emotion = face['faceAttributes']['emotion'];
 		console.log(JSON.stringify(emotion));
-		var request = new XMLHttpRequest();
-		request.open('POST', '/send_emotions', true);
-		request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-		request.send(JSON.stringify(emotion));
+		//var request = new XMLHttpRequest();
+		//request.open('POST', '/send_emotions', true);
+		//request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+		//request.send(JSON.stringify(emotion));
+		$.ajax({
+		    type: 'POST',
+		    contentType: 'application/json',
+		    url: '/send_emotions',
+		    dataType : 'json',
+		    data : JSON.stringify(emotion)
+		});
+
+		
 	    }
         }).fail(function(jqXHR, textStatus, errorThrown) {
             // Display error message.
