@@ -1,6 +1,10 @@
 # docker build -t skynet .
 # docker save skynet --output skynet.docker
-# scp skynet.docker core@cloud.husnoo.com:/tmp/skynet.docker
+# tar -cvf skynet.docker.tar.gz skynet.docker
+# scp skynet.docker.tar.gz core@cloud.husnoo.com:/tmp/skynet.docker.tar.gz
+
+# On husnoo.com
+# tar -xvf /tmp/skynet.docker.tar.gz -C /tmp/
 # docker load --input /tmp/skynet.docker
 # docker run -d -p 0.0.0.0:443:443 --name skynet skynet &
 # docker run --rm -ti -p 0.0.0.0:443:443 --name skynet skynet
