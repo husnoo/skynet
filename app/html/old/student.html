@@ -14,9 +14,6 @@
       <script src="../bower_components/respond/dest/respond.min.js"></script>
     <![endif]-->
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-    <script src="js/student.js"></script>
-
   </head>
   <body>
 
@@ -63,11 +60,11 @@
               <div class="jumbotron">
 
                 <div class="camera">
-                  <video id="video">
+                  <video id="video" width="600" height="600">
                   Video stream not available. Please give permission if possible.
                   </video>
                 </div>
-                <canvas id="canvas" style="display: none;"></canvas>
+                <canvas id="canvas" width="400" height="400" style="display: none;"></canvas>
               <!--
 
                 <h1>Jumbotron</h1>
@@ -82,6 +79,8 @@
 
     </div>
 
+
+    <script src="js/teacher.js"></script>
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     </body>

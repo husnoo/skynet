@@ -1,16 +1,182 @@
-<html>
+
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <script src="/static/teacher.js"></script>
+    <meta charset="utf-8">
+    <title>VidEd</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="stylesheet" href="custom/bootstrap.css" media="screen">
+    <link rel="stylesheet" href="custom/bootstrap.min.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="../bower_components/html5shiv/dist/html5shiv.js"></script>
+      <script src="../bower_components/respond/dest/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="js/teacher.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
 
   </head>
   <body>
-    <h1>I'm a teacher</h1>
-    <div id="update"></div>
-    <pre id="out">
-    </pre>
+  <script>
+    var width = 320;    // We will scale the photo width to this
+    var height = 0;     // This will be computed based on the input stream
     
+    var streaming = false;
+    
+    var video = null;
+    var canvas = null;
+    var photo = null;
+    var startbutton = null;
+    
+    
+    function startup() {
+        video = document.getElementById('video');
+        canvas = document.getElementById('canvas');
+        photo = document.getElementById('photo');
+        startbutton = document.getElementById('startbutton');
+        navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(function(stream) {
+      console.log(stream);
+            video.srcObject = stream;
+            video.play();
+        }).catch(function(err) {
+            console.log("An error occured! " + err);
+        });
+        video.addEventListener('canplay', function(ev){
+            if (!streaming) {
+                height = video.videoHeight / (video.videoWidth/width);
+                video.setAttribute('width', width);
+                video.setAttribute('height', height);
+                canvas.setAttribute('width', width);
+                canvas.setAttribute('height', height);
+                streaming = true;
+            }
+        }, false);
+
+     
+    }
+
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading"){
+  startup();
+    } else {
+  document.addEventListener('DOMContentLoaded', startup);
+    }
+    </script>
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a href="../" class="navbar-brand">VidEd</a>
+          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar-main">
+          <ul class="nav navbar-nav">
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a href="teacher.html">Teacher</a></li>
+            <li><a href="student.html">Student</a></li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
 
 
-    
-  </body>
+    <div class="container">
+
+      <div class="page-header" id="banner">
+        <div class="col-lg-8 col-md-7 col-sm-6">
+      </div>
+
+      <!-- Containers
+      ================================================== -->
+      <div class="bs-docs-section">
+
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="page-header">
+              <h1 id="containers">Teacher</h1>
+            </div>
+            <div class="bs-component">
+              <div class="jumbotron">
+
+              <div id="update"></div>
+              <pre id="out"></pre>
+
+                <div class="camera">
+                  <video id="video" width="50" height="50">
+                  Video stream not available. Please give permission if possible.
+                  </video>
+                </div>
+                <canvas id="canvas" style="display: none;"></canvas>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-green">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> Graph</h3>
+                            </div>
+                            <div class="panel-body">
+                            
+                              <div id="graph-wrapper">
+                                <canvas id="graph" width="400" height="200"></canvas>
+
+                                <script>
+                                var dataArray = [0, 15, -15, -25, -10, -25];
+                                var ctx = document.getElementById("graph").getContext('2d');
+                                var myChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: ["00:05", "00:04", "00:03", "00:02", "00:01", "Now"],
+                                        datasets: [{
+                                            label: 'Total Engagement Levels',
+                                            data: dataArray,
+                                            backgroundColor: [
+                                                'rgba(75, 192, 192, 0.2)',
+                                            ],
+                                            borderColor: [
+                                                'rgba(75, 192, 192, 1)',
+                                            ],
+                                            borderWidth: 3
+                                        }]
+                                    },
+                                    options: {
+                                        scales: {
+                                            yAxes: [{
+                                                ticks: {
+                                                    beginAtZero:true
+                                                }
+                                            }]
+                                        }
+                                    }
+                                });
+                                dataArray[5] = 0;
+                                dataArray[0] = 25;
+                                </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              <!--
+
+                <h1>Jumbotron</h1>
+                <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+                <p><a class="btn btn-primary btn-lg">Learn more</a></p>
+
+                -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    </body>
 </html>
