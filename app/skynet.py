@@ -11,6 +11,7 @@ import math
 from get_score import get_score
 import logging
 
+import flask
 from flask import Flask
 from flask import request
 from flask import make_response, send_from_directory
@@ -20,15 +21,22 @@ logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__, static_url_path='/code')
 app_version = "1"
-global_storage = {}
+
+from werkzeug.contrib.cache import SimpleCache
+cache = SimpleCache()
+
+
 
 def get_data():
-    return global_storage
+    if not cache.has('global_storage'):
+        cache.set('global_storage', {})
+    return cache.get('global_storage')
 
 
 def set_data(emotion):
     logging.debug(emotion)
     userid = emotion['userid']
+    global_storage = cache.get('global_storage')
     global_storage[userid] = emotion
     remove = []
     for one_id in global_storage:
@@ -40,6 +48,7 @@ def set_data(emotion):
             remove.append(one_id)
     for rem in remove:
         del global_storage[rem]
+    cache.set('global_storage', global_storage)
     logging.debug(global_storage)
     return
 
@@ -65,7 +74,7 @@ def send_emotions():
      userid = request.cookies.get("userid")
      version = request.cookies.get("skynet-version")
      logging.debug("START send_emotions" + userid)
-     logging.debug("version", version)
+     logging.debug("version" + version)
      if version != app_version:
           return {}
      emotion = request.get_json()
@@ -85,7 +94,7 @@ def send_emotions():
      emotion['agent'] = request.environ.get('HTTP_USER_AGENT')
      emotion['version'] = version
      set_data(emotion)
-     logging.debug("STOP send_emotions", userid)
+     logging.debug("STOP send_emotions"+ userid)
      return wrap_cookie("ok")
 
 @app.route('/teacher-emotions')
