@@ -26,36 +26,29 @@
     }
 
     function updateDataSumHistory() {
-	var sumOfData = 0;
-	
-	for (var i = 0; i < 6; i++) {
-            sumOfData += dataArray[i];
-	}
 
-	dataSumHistory.shift();
-	dataSumHistory[5] = sumOfData;
+        dataSumHistory.shift();
+        
+        data = Math.floor((Math.random() * 30) + 10);
+        dataSumHistory[5] = data;
 
-	for (var i = 0; i < dataSumHistory.length; i++) {
-            //console.log("Item " + i + ": " + dataSumHistory[i]);
+        //dataSumHistory[5] = sumOfData;
+
+        for (var i = 0; i < dataSumHistory.length; i++) {
+            console.log("Item " + i + ": " + dataSumHistory[i]);
             // randomDataArray.push(Math.floor((Math.random() * 5) + 2));
-	}
+        }
+        
+        if(myChart !== undefined) {
+            console.log(myChart);
+          myChart.update();
+        }
     }
 
-    function createRandomData() {
-	randomDataArray = [];
-	numOfClients = Math.floor((Math.random() * 7) + 3);
-	
-	for (var i = 0; i < numOfClients; i++) {
-            randomDataArray[i] = Math.floor((Math.random() * 5) + 2);
-            // randomDataArray.push(Math.floor((Math.random() * 5) + 2));
-	}
-    }
 
     function dataTimer() {
-	createRandomData();
-	dataArray = randomDataArray;
-	updateDataSumHistory();
-	window.setTimeout(dataTimer, 1000);
+        updateDataSumHistory();
+        window.setTimeout(dataTimer, 1000);
     }
     
     function runGraph() {
