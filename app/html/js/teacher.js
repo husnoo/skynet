@@ -48,8 +48,8 @@
         //}
         
         if(myChart !== undefined) {
-            console.log(myChart);
-          myChart.update();
+            //console.log(myChart);
+          //myChart.update();
         }
     }
 
@@ -102,6 +102,8 @@
     }
 
     function switchColour (score, cell){
+	console.log("switchColour: ", score, cell);
+	
 	currentCell = cell; // set current cell
 	switch (score) { // Add case for engagement = -3 (no face)
         case -2:
@@ -145,15 +147,22 @@
         }, 
         // extract array of engagements from data object snapshot
         createEngagements: function(){
-	    console.log(userCells)
+	    //console.log("USER CELLS:", userCells);
             for (var myKey in model) {
                 if (model.hasOwnProperty(myKey)) {
                     if(myKey in userCells) {
-                        switchColour(model[myKey], document.getElementById(userCells[myKey]));
+			
+			console.log("switch: ", model[myKey]['engagement']-3, document.getElementById(userCells[myKey]));
+                        switchColour(model[myKey]['engagement']-3, document.getElementById(userCells[myKey]));
                     } else {
+			
+			console.log("switch: ", model[myKey]['engagement']-3, document.getElementById(userCells[myKey]));
+
 			userCells[myKey] = cells[userCounter];
                         userCounter++;
-                        switchColour(model[myKey], document.getElementById(userCells[myKey]));
+                        switchColour(model[myKey]['engagement']-3, document.getElementById(userCells[myKey]));
+
+			
                     }
                 }
             }
