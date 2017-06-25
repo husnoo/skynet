@@ -103,12 +103,13 @@
 
     function switchColour (score, cell){
 	console.log("switchColour: ", score, cell);
+	score +=1;
 	
 	currentCell = cell; // set current cell
 	switch (score) { // Add case for engagement = -3 (no face)
         case -2:
             //console.log("score is -2 so colour is red");
-            currentCell.style.backgroundColor = "#dd2c00";// red set selected cell's colour
+            currentCell.style.backgroundColor = "grey";// red set selected cell's colour
             break;
         case -1:
             //console.log("score is -1 so colour is orange");
@@ -121,6 +122,9 @@
             currentCell.style.backgroundColor = "#b2ff59";// yellow-green set selected cell's colour (yellowish-green)
             break;
         case 2:
+            currentCell.style.backgroundColor = "#64dd17";// green set selected cell's colour
+            break;
+        case 3:
             currentCell.style.backgroundColor = "#64dd17";// green set selected cell's colour
             break;
         default:
@@ -152,15 +156,15 @@
                 if (model.hasOwnProperty(myKey)) {
                     if(myKey in userCells) {
 			
-			console.log("switch: ", model[myKey]['engagement'], document.getElementById(userCells[myKey]));
-                        switchColour(model[myKey]['engagement'], document.getElementById(userCells[myKey]));
+			console.log("switch: ", model[myKey]['engagement']-3, document.getElementById(userCells[myKey]));
+                        switchColour(model[myKey]['engagement']-3, document.getElementById(userCells[myKey]));
                     } else {
 			
-			console.log("switch: ", model[myKey]['engagement'], document.getElementById(userCells[myKey]));
+			console.log("switch: ", model[myKey]['engagement']-3, document.getElementById(userCells[myKey]));
 
 			userCells[myKey] = cells[userCounter];
                         userCounter++;
-                        switchColour(model[myKey]['engagement'], document.getElementById(userCells[myKey]));
+                        switchColour(model[myKey]['engagement']-3, document.getElementById(userCells[myKey]));
 
 			
                     }
