@@ -2,33 +2,42 @@
 
 
     function query_emotions(data) {
-	var subscriptionKey = "943a3da539b94315bc353c67557b4b3a";
-	var uriBase = "https://westeurope.api.cognitive.microsoft.com/face/v1.0/detect";
-	var params = {
+    var subscriptionKey = "943a3da539b94315bc353c67557b4b3a";
+    var uriBase = "https://westeurope.api.cognitive.microsoft.com/face/v1.0/detect";
+    var params = {
             "returnFaceId": "false",
             "returnFaceLandmarks": "false",
             "returnFaceAttributes": "emotion",
-	};
-	var the_url = uriBase + "?" + $.param(params);
-	$.ajax({
+    };
+    var the_url = uriBase + "?" + $.param(params);
+    $.ajax({
             url: the_url,
             beforeSend: function(xhrObj){
                 xhrObj.setRequestHeader("Content-Type","application/octet-stream");
                 xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
             },
             type: "POST",
-	    data: data,
-	    processData: false
+        data: data,
+        processData: false
         }).done(function(data) {
-	    var face = data[0];
-	    if (face != undefined) {
-		var emotion = face['faceAttributes']['emotion'];
-		console.log(JSON.stringify(emotion));
-		var request = new XMLHttpRequest();
-		request.open('POST', '/send_emotions', true);
-		request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-		request.send(JSON.stringify(emotion));
-	    }
+        var face = data[0];
+        var emotion = {}
+        if (face != undefined) {
+        emotion = face['faceAttributes']['emotion'];
+        emotion["face"] = 1
+        } else {
+        emotion = {'face': 0}
+        } 
+        console.log(JSON.stringify(emotion));
+        $.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+        url: '/send_emotions',
+        dataType : 'json',
+        data : JSON.stringify(emotion)
+        });
+
+    
         }).fail(function(jqXHR, textStatus, errorThrown) {
             // Display error message.
             var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
@@ -46,27 +55,27 @@
     //var timeout;
 
     function takepicture() {
-	var canvas = document.getElementById('canvas');
+    var canvas = document.getElementById('canvas');
         var context = canvas.getContext('2d');
         if (width && height) {
-	    canvas.width = width;
+        canvas.width = width;
             canvas.height = height;
             context.drawImage(video, 0, 0, width, height);
-	    var strURI = canvas.toDataURL('image/png');
-	    var b64Data = strURI.split(',');
+        var strURI = canvas.toDataURL('image/png');
+        var b64Data = strURI.split(',');
             var byteCharacters = atob(unescape(b64Data[1]));
             var byteNumbers = Array.prototype.map.call(byteCharacters,
-						       charCodeFromCharacter);
+                               charCodeFromCharacter);
             var uint8Data = new Uint8Array(byteNumbers);
-	    function charCodeFromCharacter(c) {
-		return c.charCodeAt(0);
-	    }
+        function charCodeFromCharacter(c) {
+        return c.charCodeAt(0);
+        }
             //clearTimeout(timeout);
-	    //timeout = setTimeout(function() {
-	    query_emotions(uint8Data);
-	    //}, 5000);
-	} else {
-	    
+        //timeout = setTimeout(function() {
+        query_emotions(uint8Data);
+        //}, 5000);
+    } else {
+        
         }
     }
     
@@ -74,7 +83,7 @@
         video = document.getElementById('video');
         canvas = document.getElementById('canvas');
         navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(function(stream) {
-	    console.log(stream);
+        console.log(stream);
             video.srcObject = stream;
             video.play();
         }).catch(function(err) {
@@ -91,18 +100,16 @@
             }
         }, false);
 
-	function timer() {
-	    takepicture();
-	    window.setTimeout(timer, 1000);
-	};
-	window.setTimeout(timer, 100);
+    function timer() {
+        takepicture();
+        window.setTimeout(timer, 1000);
+    };
+    window.setTimeout(timer, 100);
     }
     
     if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading"){
-	startup();
+    startup();
     } else {
-	document.addEventListener('DOMContentLoaded', startup);
+    document.addEventListener('DOMContentLoaded', startup);
     }
 })();
-    
-    

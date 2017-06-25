@@ -1,4 +1,96 @@
-(function() {
+function main() {
+  runGraph();
+  runBackend();
+}
+
+main();
+
+var dataObjects = {userid1:"2", userid2:"-2", userid3:"0"};
+var dataArray = Object.values(dataObjects);
+
+createRandomData();
+
+var randomDataArray = null;
+var numOfClients = null;
+
+function createRandomData() {
+	randomDataArray = [];
+	numOfClients = Math.floor((Math.random() * 7) + 3);
+
+	console.log("Num of clients: " + numOfClients);
+
+	for (var i = 0; i < numOfClients; i++) {
+		randomDataArray[i] = Math.floor((Math.random() * 5) + 2);
+		// randomDataArray.push(Math.floor((Math.random() * 5) + 2));
+		console.log("Data for pos " + i + ": " + randomDataArray[i]);
+	}
+}
+
+function runGraph() {
+
+	var dataArray = [0, 15, -15, -25, -10, -25];
+	var ctx = document.getElementById("graph").getContext('2d');
+	var myChart = new Chart(ctx, {
+	    type: 'line',
+	    data: {
+	        labels: ["00:05", "00:04", "00:03", "00:02", "00:01", "Now"],
+	        datasets: [{
+	            label: 'Total Engagement Levels',
+	            data: dataArray,
+	            backgroundColor: [
+	                'rgba(75, 192, 192, 0.2)',
+	            ],
+	            borderColor: [
+	                'rgba(75, 192, 192, 1)',
+	            ],
+	            borderWidth: 3
+	        }]
+	    },
+	    options: {
+	        scales: {
+	            yAxes: [{
+	                ticks: {
+	                    beginAtZero:true
+	                }
+	            }]
+	        }
+	    }
+	});
+	dataArray[5] = 0;
+	dataArray[0] = 25;
+  
+  console.log("I WORK");
+  
+  var context2D = document.getElementById("graph").getContext('2d');
+  
+  var graph = new Chart(context2D, {
+    data: {
+      labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+      datasets: [{
+        label: '# of Votes',
+        data: [12, 19, 3, 5, 2, 3],
+        backgroundColor: [
+          'rgba(75, 192, 192, 0.2)',
+        ],
+        borderColor: [
+          'rgba(75, 192, 192, 1)',
+        ],
+        borderWidth: 3
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }]
+      }
+    }
+  });
+}
+
+function runBackend() {
     
     function fetch() {
 	var request = new XMLHttpRequest();
@@ -26,11 +118,11 @@
     function timer() {
         fetch();
         window.setTimeout(timer, 1000);
-    };
+    }
     
     function startup() { 
 	window.setTimeout(timer, 1000);
-    };
+    }
 
     if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading"){
         startup();
@@ -38,48 +130,4 @@
         document.addEventListener('DOMContentLoaded', startup);
     }
 
-
-
-
-    var dataObjects = {userid1:"2", userid2:"-2",}
-
-	var context2D = document.getElementById("graph").getContext('2d');
-
-	var dataArray = [15, 0, 3];
-
-	var graph = new Chart(context2D, {
-    data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
-    }
-
-})();
+}

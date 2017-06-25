@@ -14,55 +14,10 @@
       <script src="../bower_components/respond/dest/respond.min.js"></script>
     <![endif]-->
 
-    <script src="js/teacher.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
 
   </head>
   <body>
-  <script>
-    var width = 320;    // We will scale the photo width to this
-    var height = 0;     // This will be computed based on the input stream
-    
-    var streaming = false;
-    
-    var video = null;
-    var canvas = null;
-    var photo = null;
-    var startbutton = null;
-    
-    
-    function startup() {
-        video = document.getElementById('video');
-        canvas = document.getElementById('canvas');
-        photo = document.getElementById('photo');
-        startbutton = document.getElementById('startbutton');
-        navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(function(stream) {
-      console.log(stream);
-            video.srcObject = stream;
-            video.play();
-        }).catch(function(err) {
-            console.log("An error occured! " + err);
-        });
-        video.addEventListener('canplay', function(ev){
-            if (!streaming) {
-                height = video.videoHeight / (video.videoWidth/width);
-                video.setAttribute('width', width);
-                video.setAttribute('height', height);
-                canvas.setAttribute('width', width);
-                canvas.setAttribute('height', height);
-                streaming = true;
-            }
-        }, false);
-
-     
-    }
-
-    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading"){
-  startup();
-    } else {
-  document.addEventListener('DOMContentLoaded', startup);
-    }
-    </script>
     <div class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -108,6 +63,89 @@
               <div id="update"></div>
               <pre id="out"></pre>
 
+              <table width="352px" border="1">
+                  <tr height="44px">
+                    <td id="A0"></td>
+                    <td id="A1"></td>
+                    <td id="A2"></td>
+                    <td id="A3"></td>
+                    <td id="A4"></td>
+                    <td id="A5"></td>
+                    <td id="A6"></td>
+                    <td id="A7"></td>
+                  </tr>
+                  <tr height="44px">
+                    <td id="B0"></td>
+                    <td id="B1"></td>
+                    <td id="B2"></td>
+                    <td id="B3"></td>
+                    <td id="B4"></td>
+                    <td id="B5"></td>
+                    <td id="B6"></td>
+                    <td id="B7"></td>
+                  </tr>
+                  <tr height="44px">
+                    <td id="C0"></td>
+                    <td id="C1"></td>
+                    <td id="C2"></td>
+                    <td id="C3"></td>
+                    <td id="C4"></td>
+                    <td id="C5"></td>
+                    <td id="C6"></td>
+                    <td id="C7"></td>
+                  </tr>
+                  <tr height="44px">
+                    <td id="D0"></td>
+                    <td id="D1"></td>
+                    <td id="D2"></td>
+                    <td id="D3"></td>
+                    <td id="D4"></td>
+                    <td id="D5"></td>
+                    <td id="D6"></td>
+                    <td id="D7"></td>
+                  </tr>
+                  <tr height="44px">
+                    <td id="E0"></td>
+                    <td id="E1"></td>
+                    <td id="E2"></td>
+                    <td id="E3"></td>
+                    <td id="E4"></td>
+                    <td id="E5"></td>
+                    <td id="E6"></td>
+                    <td id="E7"></td>
+                  </tr>
+                  <tr height="44px">
+                    <td id="F0"></td>
+                    <td id="F1"></td>
+                    <td id="F2"></td>
+                    <td id="F3"></td>
+                    <td id="F4"></td>
+                    <td id="F5"></td>
+                    <td id="F6"></td>
+                    <td id="F7"></td>
+                  </tr>
+                  <tr height="44px">
+                    <td id="G0"></td>
+                    <td id="G1"></td>
+                    <td id="G2"></td>
+                    <td id="G3"></td>
+                    <td id="G4"></td>
+                    <td id="G5"></td>
+                    <td id="G6"></td>
+                    <td id="G7"></td>
+                  </tr>
+                  <tr height="44px">
+                    <td id="H0"></td>
+                    <td id="H1"></td>
+                    <td id="H2"></td>
+                    <td id="H3"></td>
+                    <td id="H4"></td>
+                    <td id="H5"></td>
+                    <td id="H6"></td>
+                    <td id="H7"></td>
+                  </tr>
+                </table>
+
                 <div class="camera">
                   <video id="video" width="50" height="50">
                   Video stream not available. Please give permission if possible.
@@ -127,36 +165,7 @@
                                 <canvas id="graph" width="400" height="200"></canvas>
 
                                 <script>
-                                var dataArray = [0, 15, -15, -25, -10, -25];
-                                var ctx = document.getElementById("graph").getContext('2d');
-                                var myChart = new Chart(ctx, {
-                                    type: 'line',
-                                    data: {
-                                        labels: ["00:05", "00:04", "00:03", "00:02", "00:01", "Now"],
-                                        datasets: [{
-                                            label: 'Total Engagement Levels',
-                                            data: dataArray,
-                                            backgroundColor: [
-                                                'rgba(75, 192, 192, 0.2)',
-                                            ],
-                                            borderColor: [
-                                                'rgba(75, 192, 192, 1)',
-                                            ],
-                                            borderWidth: 3
-                                        }]
-                                    },
-                                    options: {
-                                        scales: {
-                                            yAxes: [{
-                                                ticks: {
-                                                    beginAtZero:true
-                                                }
-                                            }]
-                                        }
-                                    }
-                                });
-                                dataArray[5] = 0;
-                                dataArray[0] = 25;
+                               
                                 </script>
                                 </div>
                             </div>
@@ -176,7 +185,10 @@
         </div>
 
     </div>
+
+    <script src="js/teacher.js"></script>
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+
     </body>
 </html>
