@@ -3,8 +3,8 @@ from PIL import Image, ImageTk
 import os, glob
 
 #.  from math import abs
-path = "./Images/jaffe/"
-images_filenames = glob.glob(path + "*.tiff")
+path = "./Images/"
+images_filenames =  glob.glob(path + "yalefaces/*.jpeg")
 
 print (len(images_filenames))
 
@@ -27,20 +27,13 @@ class ExampleApp(tk.Tk):
         self.cross_hor = self.canvas.create_line(0,0,0,0, width=1, fill=self.outline)
         self.cross_ver = self.canvas.create_line(0,0,0,0, width=1, fill=self.outline)
         self.crop_points = (0,0,0,0)
-        self.f = open(path + "/output.txt", 'w')
+        self.f = open(path + "output.txt", 'w')
         self.next_image()
 
     def key_pressed(self, event):
-        if event.char == '1':
-            self.f.write(self.image_path.split("/")[-1] + " 0\n")
-            self.next_image()
-        
-        elif event.char == '2':
-            self.f.write(self.image_path.split("/")[-1] + " 1\n")
-            self.next_image()
-            
-        elif event.char == '3':
-            self.f.write(self.image_path.split("/")[-1] + " 2\n")
+        if event.char in ['1','2','3','4','5']:
+            print(event.char)
+            self.f.write(self.image_path.split("/")[-1] + " "+event.char+"\n")
             self.next_image()
 
         elif event.char == 's':
@@ -52,14 +45,16 @@ class ExampleApp(tk.Tk):
                 self.canvas.delete(self.rect)
 
     def next_image(self):
-        if self.count+1 < len(images_filenames):
-            self.count += 1
+        self.count += 1
+        if self.count < len(images_filenames):
             self.image_path = images_filenames[self.count]
-            print (os.path.basename(self.image_path))
+            print(os.path.basename(self.image_path))
             self.image = Image.open(self.image_path)
             self.photo = ImageTk.PhotoImage(self.image)
             self.canvas.config(width=self.image.size[0], height=self.image.size[1])
             self.canvas.create_image(0, 0, anchor="nw", image=self.photo)
+        else:
+            self.destroy()
 
     def delete_image(self):
         image_to_detele = images_filenames[self.count]

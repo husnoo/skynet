@@ -20,7 +20,7 @@ with open("./Images/combined.txt", 'r') as file:
             print(d['fname'] + " " + name)
             if name in d['fname']:
                 string = ("%4f %4f %4f %4f %4f %4f %4f %4f \n" % ( d['anger'], d['contempt'], d['disgust'], d['fear'], d['happiness'], d['neutral'], d['sadness'], d['surprise'] ))
-                string = ("%d %d %d %d %d %d %d %d\n" % ( d['anger']*1000, d['contempt']*1000, d['disgust']*1000, d['fear']*1000, d['happiness']*1000, d['neutral']*1000, d['sadness']*1000, d['surprise']*1000 ))
+                string = ("%d %d %d %d %d %d %d %d\n" % ( d['anger'], d['contempt'], d['disgust'], d['fear'], d['happiness'], d['neutral'], d['sadness'], d['surprise']))
                 x_file.write(string)
                 y_file.write(y+'\n')
 
