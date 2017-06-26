@@ -129,7 +129,7 @@ def index():
 
 
 
-context = ('/code/host.crt', '/code/host.key')
+context = ('/code/keys/host.crt', '/code/keys/host.key')
 app.run(host='0.0.0.0',port=443, 
         debug=True,
         ssl_context=context)

@@ -70,5 +70,11 @@ docker rm -f skynet
 ```
 
 
+## To regenerate a self-signed certificate
+```
+cd skynet/app/keys/demo.keys/
+openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout host.key -out host.crt
+```
+
 
 
