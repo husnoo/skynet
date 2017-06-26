@@ -27,21 +27,8 @@
     }
 
     function updateDataSumHistory() {
-
         dataSumHistory.shift();
-
-
-
-	
-        data = Math.floor((Math.random() * 30) + 10);
-
-
-
-
-	dataSumHistory[5] = data;
-
         //dataSumHistory[5] = sumOfData;
-
         //for (var i = 0; i < dataSumHistory.length; i++) {
         //    console.log("Item " + i + ": " + dataSumHistory[i]);
         //    // randomDataArray.push(Math.floor((Math.random() * 5) + 2));
@@ -51,6 +38,18 @@
             //console.log(myChart);
           //myChart.update();
         }
+
+        var sumData = 0;
+        for (var myKey in model) {
+                if (model.hasOwnProperty(myKey)) {
+                    if(myKey in userCells) {
+                        sumData += (model[myKey] - 3);
+                    }
+                }
+        }
+
+        dataSumHistory[5] = sumData;
+
     }
 
 
@@ -155,7 +154,6 @@
             for (var myKey in model) {
                 if (model.hasOwnProperty(myKey)) {
                     if(myKey in userCells) {
-			
 			console.log("switch: ", model[myKey]['engagement']-3, document.getElementById(userCells[myKey]));
                         switchColour(model[myKey]['engagement']-3, document.getElementById(userCells[myKey]));
                     } else {
@@ -165,8 +163,6 @@
 			userCells[myKey] = cells[userCounter];
                         userCounter++;
                         switchColour(model[myKey]['engagement']-3, document.getElementById(userCells[myKey]));
-
-			
                     }
                 }
             }
@@ -221,9 +217,9 @@
 	    if (request.status >= 200 && request.status < 400) {
 		model = JSON.parse(request.responseText);
 		control.createEngagements();
-		var str = JSON.stringify(model, null, 2);
-		var out = document.getElementById("out");
-		out.innerHTML = str;
+		//var str = JSON.stringify(model, null, 2);
+		//var out = document.getElementById("out");
+		//out.innerHTML = str;
 		
 		var update = document.getElementById("update");
 		var timeInMs = Date.now();
