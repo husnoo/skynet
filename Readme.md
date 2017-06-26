@@ -36,8 +36,7 @@ The backend code lives in `app/skynet.py`, and `app/get_score.py`. The latter is
 ### Other trivia
 1. We're using the Flask web library, which handles the boring bits of HTTP back and forth, as well as wrapping it all in a HTTPS layer. This is needed for the client camera to be available to us.
 2. We give people a cookie, not because we're nice, but because we want to know who's paying attention.
-3. `get_data` and `set_data` store the application state, i.e. who's listening, and how much attention they're paying. In an operational setting we'd use redis.
-4. 
+3. `get_data` and `set_data` store the application state, i.e. who's listening, and how much attention they're paying. In an operational setting we'd use redis. 
 
 
 ## Building the docker image
