@@ -3,6 +3,8 @@ git clone git@github.com:husnoo/skynet.git
 
 https://skynet999.slack.com/messages/@slackbot/
 
+https://docs.google.com/presentation/d/1aWrTjkXcW9VfOehtvR04VAuFhb6OkSsHRSy3sFIyxOY/edit#slide=id.p
+
 Global Hackathon 2017 London
 
 ## Top level Documentation
