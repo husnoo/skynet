@@ -13,7 +13,7 @@
 
     
     function query_emotions(data) {
-	var subscriptionKey = "943a3da539b94315bc353c67557b4b3a";
+	var subscriptionKey = "<AZURE_FACE_API_KEY>";
 	var uriBase = "https://westeurope.api.cognitive.microsoft.com/face/v1.0/detect";
 	var params = {
             "returnFaceId": "false",
