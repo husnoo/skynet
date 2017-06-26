@@ -25,6 +25,7 @@ app_version = "1"
 from werkzeug.contrib.cache import SimpleCache
 cache = SimpleCache()
 
+azure_face_api_key = open('/code/keys/azure_face_api_key.txt').read().strip()
 
 
 def get_data():
@@ -52,6 +53,11 @@ def set_data(emotion):
     cache.set('global_storage', global_storage)
     #logging.debug(global_storage)
     return
+
+@app.route('/static/js/student.js')
+def student_js():
+    return wrap_cookie(open("/code/html/js/student.js").read().replace("<AZURE_FACE_API_KEY>", azure_face_api_key))
+
 
 @app.route('/static/<path:path>')
 def static_file(path):
@@ -129,7 +135,7 @@ def index():
 
 
 
-context = ('/code/host.crt', '/code/host.key')
+context = ('/code/keys/host.crt', '/code/keys/host.key')
 app.run(host='0.0.0.0',port=443, 
         debug=True,
         ssl_context=context)
