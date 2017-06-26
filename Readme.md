@@ -76,5 +76,8 @@ cd skynet/app/keys/demo.keys/
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout host.key -out host.crt
 ```
 
-
-
+## Clean docker image cache
+```
+docker images -q |xargs docker rmi
+```
+Note that sometimes the browser can also cache .js files, so your changes won't show. Use Incognito Browser for better test results.
